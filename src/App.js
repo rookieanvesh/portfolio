@@ -1,306 +1,425 @@
 import React, { useState } from 'react';
-import emailjs from '@emailjs/browser';
-
-// Classic Macintosh-style icons
-const FolderIcon = ({ className, isOpen }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className={className} fill={isOpen ? "#FFD700" : "#C0C0C0"}>
-    <path d="M4 8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h24c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2H4z" />
-    <path d="M28 8H4L2 6h26z" fill="#808080" />
-  </svg>
+import { FaFolder, FaFolderOpen, FaFile, FaGithub, FaLinkedin } from 'react-icons/fa';
+import { SiLeetcode } from 'react-icons/si';
+import { FaExternalLinkAlt } from 'react-icons/fa';
+import ContactForm from './ContactForm'
+import { 
+  FaJava, 
+  FaReact, 
+  FaGit, 
+  FaAws, 
+  FaDatabase 
+ } from 'react-icons/fa';
+ import { 
+  SiSpringboot, 
+  SiJavascript, 
+  SiPostgresql, 
+  SiMysql, 
+  SiApachekafka,
+  SiSpring
+ } from 'react-icons/si';
+const FileIcon = ({ type, isOpen }) => {
+  if (type === 'folder') {
+    return isOpen ? 
+      <FaFolderOpen className="text-yellow-400" size={20} /> : 
+      <FaFolder className="text-yellow-400" size={20} />;
+  }
+  return <FaFile className="text-gray-400" size={20} />;
+};
+const WelcomeMessage = () => (
+  <div className="flex flex-col items-center justify-center h-full text-gray-600">
+    <p className="text-xl font-light italic mb-4">📂 Click around! I promise these folders don't byte... 🐱‍💻</p>
+    <p className="text-sm">Psst... I'm actively avoiding bugs while you explore!</p>
+  </div>
 );
-
-const PortfolioApp = () => {
-  const [openFolders, setOpenFolders] = useState({
-    experience: false,
-    education: false,
-    contact: false,
-    skills: false,
-    projects: false
-  });
-
-  const [emailForm, setEmailForm] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
-
-  const [emailStatus, setEmailStatus] = useState({
-    sending: false,
-    success: false,
-    error: false
-  });
-
-  const toggleFolder = (folderName) => {
-    setOpenFolders(prev => ({
-      ...prev,
-      [folderName]: !prev[folderName]
-    }));
-  };
-
-  const handleEmailFormChange = (e) => {
-    const { name, value } = e.target;
-    setEmailForm(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleEmailSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Basic client-side validation
-    if (!emailForm.name || !emailForm.email || !emailForm.message) {
-      alert('Please fill in all fields');
-      return;
-    }
-
-    setEmailStatus({ sending: true, success: false, error: false });
-
-    try {
-      const response = await fetch('https://formspree.io/f/xzzzqppv', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: emailForm.name,
-          email: emailForm.email,
-          message: emailForm.message
-        })
-      });
-
-      if (response.ok) {
-        setEmailStatus({ sending: false, success: true, error: false });
-        // Reset form
-        setEmailForm({ name: '', email: '', message: '' });
-        // Clear status after 3 seconds
-        setTimeout(() => setEmailStatus({ sending: false, success: false, error: false }), 3000);
-      } else {
-        throw new Error('Failed to send email');
-      }
-    } catch (error) {
-      setEmailStatus({ sending: false, success: false, error: true });
-      // Clear error after 3 seconds
-      setTimeout(() => setEmailStatus({ sending: false, success: false, error: false }), 3000);
-    }
-  };
-
-  const WindowHeader = () => (
-    <div className="bg-[#808080] h-6 flex items-center justify-between px-2 text-white text-xs">
-      <span>Anvesh Srivastava - Portfolio</span>
-      <div className="flex space-x-1">
-        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-      </div>
+const contentComponents = {
+  about: () => (
+    <div className="p-4 space-y-4">
+      <h2 className="text-xl font-bold">About Me</h2>
+      <p>Final Year Student at VIT Bhopal with expertise in Spring Boot and React.</p>
     </div>
-  );
-
-  const EducationContent = () => (
-    <div className="p-2 text-xs bg-white">
-      <div className="mb-2">
-        <strong>Vellore Institute of Technology Bhopal</strong>
-        <div>B.Tech in Computer Science and Engineering</div>
-        <div>CGPA: 8.35/10 | Sep 2021 - Jul 2025</div>
-      </div>
-      <div>
-        <strong>Campion School, Bhopal</strong>
-        <div>Class XII: 85.4% | Apr 2020 - May 2021</div>
-        <div>Class X: 92.2% | Apr 2018 - May 2019</div>
-      </div>
+  ),
+  education: () => (
+    <div className="p-4 space-y-4">
+      <h3 className="font-semibold">VIT Bhopal</h3>
+      <p>B.Tech in Computer Science | CGPA: 8.35/10</p>
+      <p>2021 - 2025</p>
+      
+      <h3 className="font-semibold mt-4">Campion School, Bhopal</h3>
+      <p>Class XII: 85.4% | 2021</p>
+      <p>Class X: 92.2% | 2019</p>
     </div>
-  );
-
-  const ExperienceContent = () => (
-    <div className="p-2 text-xs bg-white">
+  ),
+  experience: () => (
+    <div className="p-4 space-y-4">
       <div>
-        <strong>Intern at G-INFOSOFT Technologies, Bhopal</strong>
-        <div>May 2024 - June 2024</div>
-        <ul className="list-disc pl-4">
-          <li>Architected distributed e-commerce platform using Spring Boot microservices</li>
+        <h3 className="font-semibold">Intern at G-INFOSOFT Technologies</h3>
+        <p className="text-gray-600">May 2024 - June 2024</p>
+        <ul className="list-disc pl-4 mt-2">
+          <li>Architected distributed e-commerce platform</li>
           <li>Engineered fault-tolerant order processing system</li>
         </ul>
       </div>
     </div>
-  );
+  ),
+  certifications: () => (
+    <div className="p-4 space-y-4">
+      <h3 className="font-semibold text-xl">AWS Certifications</h3>
+      <div className="space-y-6">
+        <div className="border-l-4 border-blue-500 pl-4">
+          <h4 className="font-semibold">AWS Solutions Architect Associate [SAA-C03]</h4>
+          <a 
+            href="https://cp.certmetrics.com/amazon/en/public/verify/credential/b5ea291b44bf41f59d753248a49b90ed"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 flex items-center gap-2 mt-2"
+          >
+            <span>Verify Certificate</span>
+            <FaExternalLinkAlt size={12} />
+          </a>
+        </div>
 
-  const ContactContent = () => (
-    <div className="p-2 text-xs bg-white">
-      <div className="mb-2">
-        <strong>Contact Information</strong>
-        <div>Phone: +91-7974-810-846</div>
-        <div>Email: srivastavaanvesh13@gmail.com</div>
+        <div className="border-l-4 border-blue-500 pl-4">
+          <h4 className="font-semibold">AWS Cloud Practitioner [CLF-C02]</h4>
+          <a 
+            href="https://cp.certmetrics.com/amazon/en/public/verify/credential/fd16daf4a1de46989e27ec7cc8f59930"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 flex items-center gap-2 mt-2"
+          >
+            <span>Verify Certificate</span>
+            <FaExternalLinkAlt size={12} />
+          </a>
+        </div>
       </div>
-      <form onSubmit={handleEmailSubmit} className="space-y-2">
-        <div>
-          <label className="block mb-1">Name</label>
-          <input
-            type="text"
-            name="name"
-            value={emailForm.name}
-            onChange={handleEmailFormChange}
-            required
-            className="w-full p-1 border border-gray-400 bg-white"
-          />
-        </div>
-        <div>
-          <label className="block mb-1">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={emailForm.email}
-            onChange={handleEmailFormChange}
-            required
-            className="w-full p-1 border border-gray-400 bg-white"
-          />
-        </div>
-        <div>
-          <label className="block mb-1">Message</label>
-          <textarea
-            name="message"
-            value={emailForm.message}
-            onChange={handleEmailFormChange}
-            required
-            className="w-full p-1 border border-gray-400 bg-white h-24"
-          ></textarea>
-        </div>
-        <button
-          type="submit"
-          disabled={emailStatus.sending}
-          className="w-full p-2 bg-[#D4D0C8] border border-gray-500 hover:bg-gray-300"
+    </div>
+  ),
+  vivaran: () => (
+    <div className="p-4 space-y-4">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-semibold text-xl">Vivaran - Documentation Platform</h3>
+        <a 
+          href="https://github.com/rookieanvesh/vivaran"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
         >
-          {emailStatus.sending ? 'Sending...' : 'Send Message'}
-        </button>
-        {emailStatus.success && (
-          <div className="text-green-600 text-center mt-2">
-            Message sent successfully!
+          <FaGithub size={20} />
+          <span className="text-sm">View Code</span>
+        </a>
+      </div>
+      <div className="mt-4 mb-4">
+        <iframe 
+          className="w-full aspect-video rounded-lg shadow-lg"
+          src="https://www.youtube.com/embed/TaHqsHOqeWk"
+          title="Vivaran Demo"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      </div>
+      <div className="space-y-2">
+        <div className="text-gray-600 italic">September 2024 - November 2024</div>
+        <div className="text-gray-600">Java, Spring Boot, MySql, AWS RDS, OAuth2, React, Google Gemini</div>
+      </div>
+      <ul className="list-disc pl-4 mt-2 space-y-2">
+        <li>Built a secure documentation platform with OAuth2/MFA with over 5+ team members, implementing audit logging with 100% action traceability.</li>
+        <li>Strengthened platform security through JWT-based authentication and CSRF protection, maintaining documentation integrity.</li>
+        <li>Integrated Google Gemini AI for natural language documentation queries, reducing retrieval time from 5 minutes to 45 seconds.</li>
+        <li>Optimized database performance and scalability using Amazon RDS and Elastic Beanstalk, reducing query response time by 60% while maintaining 75% system uptime.</li>
+      </ul>
+    </div>
+  ),
+ 
+  restin: () => (
+    <div className="p-4 space-y-4">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-semibold text-xl">RestIn - Hotel Management System</h3>
+        <a 
+          href="https://github.com/rookieanvesh/hotel-management"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
+        >
+          <FaGithub size={20} />
+          <span className="text-sm">View Code</span>
+        </a>
+      </div>
+      <div className="mt-4 mb-4">
+        <iframe 
+          className="w-full aspect-video rounded-lg shadow-lg"
+          src="https://www.youtube.com/embed/2jmLb_gZ70A"
+          title="RestIn Demo"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      </div>
+      <div className="space-y-2">
+        <div className="text-gray-600 italic">August 2024 - September 2024</div>
+        <div className="text-gray-600">Java, Spring Boot, PostgreSQL, AWS S3, React, JWT</div>
+      </div>
+      <ul className="list-disc pl-4 mt-2 space-y-2">
+        <li>Constructed a full-stack hotel management system using Spring Boot and MVC architecture with JWT authentication, improving booking efficiency by 10%.</li>
+        <li>Integrated AWS S3 for image storage and designed a SQL database, optimizing system performance by reducing page load times by 40% and enabling the management of over 7+ room listings concurrently.</li>
+        <li>Designed and simplified a concurrency-safe booking system using database transactions and pessimistic locking, eliminating double-bookings and improving customer satisfaction by 15%.</li>
+      </ul>
+    </div>
+  ),
+  projects: () => (
+    <div className="p-4 space-y-8">
+      <div>
+        <h3 className="font-semibold text-xl">Vivaran - Documentation Platform</h3>
+        <ul className="list-disc pl-4 mt-2">
+          <li>Built with Spring Boot and React</li>
+          <li>Features OAuth2/MFA, JWT authentication</li>
+          <li>Integrated Google Gemini AI</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 className="font-semibold text-xl">RestIn - Hotel Management System</h3>
+        <div className="mt-4 mb-4">
+          <iframe 
+            className="w-full aspect-video rounded-lg shadow-lg"
+            src="https://www.youtube.com/embed/2jmLb_gZ70A"
+            title="RestIn Demo"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+        <ul className="list-disc pl-4 mt-2">
+          <li>Full-stack hotel management system using Spring Boot and MVC architecture</li>
+          <li>Improved booking efficiency by 10% with JWT authentication</li>
+          <li>Integrated AWS S3 for image storage and optimized SQL database design</li>
+          <li>Reduced page load times by 40%</li>
+          <li>Implemented concurrency-safe booking system using database transactions</li>
+          <li>Eliminated double-bookings with pessimistic locking</li>
+          <li>Improved customer satisfaction by 15%</li>
+        </ul>
+        <div className="mt-4">
+          <a 
+            href="https://www.youtube.com/watch?v=2jmLb_gZ70A"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 flex items-center gap-2"
+          >
+            <span>Watch Demo on YouTube</span>
+            <FaExternalLinkAlt size={12} />
+          </a>
+        </div>
+      </div>
+    </div>
+  ),
+  contact: () => <ContactForm />,
+  skills: () => (
+    <div className="p-4 space-y-6">
+      <div className="space-y-4">
+        <h3 className="font-semibold text-xl mb-4">Skills & Technologies</h3>
+        
+        <div className="space-y-6">
+          <div>
+            <h4 className="text-sm text-gray-600 mb-2">Languages & Frameworks</h4>
+            <div className="flex flex-wrap gap-4">
+              <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+                <FaJava className="text-red-600" size={20} />
+                <span>Java</span>
+              </div>
+              <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+                <SiSpringboot className="text-green-600" size={20} />
+                <span>Spring Boot</span>
+              </div>
+              <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+                <FaReact className="text-blue-500" size={20} />
+                <span>React</span>
+              </div>
+              <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+                <SiJavascript className="text-yellow-500" size={20} />
+                <span>JavaScript</span>
+              </div>
+            </div>
+            </div>
+    
+            <div>
+              <h4 className="text-sm text-gray-600 mb-2">Databases & Cloud</h4>
+              <div className="flex flex-wrap gap-4">
+                <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+                  <SiPostgresql className="text-blue-600" size={20} />
+                  <span>PostgreSQL</span>
+                </div>
+                <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+                  <SiMysql className="text-orange-600" size={20} />
+                  <span>MySQL</span>
+                </div>
+                <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+                  <FaAws className="text-orange-500" size={20} />
+                  <span>AWS</span>
+                </div>
+                <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+                  <FaDatabase className="text-gray-600" size={20} />
+                  <span>Microservices</span>
+                </div>
+              </div>
+            </div>
+    
+            <div>
+              <h4 className="text-sm text-gray-600 mb-2">Tools & Others</h4>
+              <div className="flex flex-wrap gap-4">
+                <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+                  <FaGit className="text-orange-600" size={20} />
+                  <span>Git</span>
+                </div>
+                <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+                  <SiApachekafka className="text-black" size={20} />
+                  <span>Kafka</span>
+                </div>
+                <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+                  <SiSpring className="text-green-600" size={20} />
+                  <span>Spring Security</span>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
-        {emailStatus.error && (
-          <div className="text-red-600 text-center mt-2">
-            Failed to send message. Please try again.
-          </div>
-        )}
-      </form>
-    </div>
-  );
+        </div>
+      </div>
+    ),
+    }
 
-  const SkillsContent = () => (
-    <div className="p-2 text-xs bg-white">
-      <div>• Languages: Java, Spring Boot, React, JavaScript</div>
-      <div>• Technologies: PostgreSQL, AWS, Microservices</div>
-      <div>• Tools: Git, Kafka, Spring Security</div>
-    </div>
-  );
+const fileTree = {
+  name: 'Portfolio',
+  type: 'folder',
+  isOpen: true,
+  children: [
+    {
+      name: 'About',
+      type: 'folder',
+      isOpen: false,
+      children: [
+        { name: 'Education', type: 'file', content: 'education' },
+        { name: 'Experience', type: 'file', content: 'experience' },
+        { name: 'Skills', type: 'file', content: 'skills' },
+        { name: 'Certifications', type: 'file', content: 'certifications' }
+      ]
+    },
+    {
+      name: 'Projects',
+      type: 'folder',
+      isOpen: false,
+      children: [
+        { name: 'Vivaran', type: 'file', content: 'vivaran' },
+        { name: 'RestIn', type: 'file', content: 'restin' }
+      ]
+    },
+    { name: 'Contact', type: 'file', content: 'contact' }
+  ]
+};
 
-  const FileItem = ({ icon: Icon, label, onClick, isOpen }) => (
-    <div 
-      className={`flex items-center cursor-pointer p-1 ${isOpen ? 'bg-[#0000AA] text-white' : 'hover:bg-gray-200'}`}
-      onClick={onClick}
-    >
-      <Icon className="mr-2 w-6 h-6" isOpen={isOpen} />
-      <span>{label}</span>
-      <span className="ml-auto text-xs">
-        {isOpen ? '▼' : '▶'}
-      </span>
-    </div>
-  );
-
-  const SocialLinks = () => (
-    <div className="absolute top-8 right-2 flex space-x-1">
-      <a 
-        href="https://github.com/rookieanvesh" 
-        target="_blank" 
-        rel="noopener noreferrer" 
-        className="text-gray-700 hover:text-black"
-        title="GitHub"
-      >
-        <img 
-          src="/api/placeholder/24/24" 
-          alt="GitHub" 
-          className="w-6 h-6 bg-gray-300 rounded"
-        />
-      </a>
-      <a 
-        href="https://www.linkedin.com/in/anvesh-/" 
-        target="_blank" 
-        rel="noopener noreferrer" 
-        className="text-gray-700 hover:text-black"
-        title="LinkedIn"
-      >
-        <img 
-          src="/api/placeholder/24/24" 
-          alt="LinkedIn" 
-          className="w-6 h-6 bg-gray-300 rounded"
-        />
-      </a>
-      <a 
-        href="https://leetcode.com/u/rookieanvesh/" 
-        target="_blank" 
-        rel="noopener noreferrer" 
-        className="text-gray-700 hover:text-black"
-        title="LeetCode"
-      >
-        <img 
-          src="/api/placeholder/24/24" 
-          alt="LeetCode" 
-          className="w-6 h-6 bg-gray-300 rounded"
-        />
-      </a>
-    </div>
-  );
+const FileTreeNode = ({ node, depth = 0, onSelect, selectedFile }) => {
+  const paddingLeft = depth * 16;
+  const isSelected = selectedFile === node;
 
   return (
-    <div className="font-mono bg-[#D4D0C8] min-h-screen flex items-center justify-center p-4">
-      <div className="bg-white border-4 border-[#808080] shadow-lg w-full max-w-xl relative">
-        <WindowHeader />
-        <SocialLinks />
-        
-        <div className="p-2">
-          <div className="text-center mb-4">
-            <h1 className="text-xl font-bold">Anvesh Srivastava</h1>
-            <p className="text-xs text-gray-600">
-              Final Year Student, VIT Bhopal
-            </p>
+    <div>
+      <div 
+        className={`flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100
+          ${isSelected ? 'bg-blue-100' : ''}`}
+        style={{ paddingLeft: `${paddingLeft}px` }}
+        onClick={() => onSelect(node)}
+      >
+        <FileIcon type={node.type} isOpen={node.isOpen} />
+        <span className="text-sm">{node.name}</span>
+      </div>
+      {node.type === 'folder' && node.isOpen && node.children?.map((child, index) => (
+        <FileTreeNode 
+          key={index}
+          node={child}
+          depth={depth + 1}
+          onSelect={onSelect}
+          selectedFile={selectedFile}
+        />
+      ))}
+    </div>
+  );
+};
+
+const Portfolio = () => {
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleSelect = (node) => {
+    if (node.type === 'file') {
+      setSelectedFile(node);
+    } else {
+      node.isOpen = !node.isOpen;
+      setSelectedFile({ ...node });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
+        {/* Header */}
+        <div className="bg-gray-800 px-4 py-2 flex justify-between items-center">
+          <div className="flex gap-2">
+            <div className="w-3 h-3 rounded-full bg-red-500"></div>
+            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+          </div>
+          <div className="text-white text-sm">Anvesh's Portfolio</div>
+          <div className="flex gap-4 text-gray-400">
+            <a href="https://github.com/rookieanvesh" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               title="GitHub"
+               className="transition-transform hover:scale-110">
+              <FaGithub className="hover:text-white" size={20} />
+            </a>
+            <a href="https://www.linkedin.com/in/anvesh-/" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               title="LinkedIn"
+               className="transition-transform hover:scale-110">
+              <FaLinkedin className="hover:text-white" size={20} />
+            </a>
+            <a href="https://leetcode.com/u/rookieanvesh/" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               title="LeetCode"
+               className="transition-transform hover:scale-110">
+              <SiLeetcode className="hover:text-white" size={20} />
+            </a>
+          </div>
+        </div>
+
+        <div className="flex">
+          {/* Sidebar */}
+          <div className="w-64 border-r border-gray-200">
+            <FileTreeNode 
+              node={fileTree} 
+              onSelect={handleSelect}
+              selectedFile={selectedFile}
+            />
           </div>
 
-          <div className="border border-gray-400">
-            <FileItem 
-              icon={FolderIcon} 
-              label="Education" 
-              onClick={() => toggleFolder('education')}
-              isOpen={openFolders.education}
-            />
-            {openFolders.education && <EducationContent />}
-
-            <FileItem 
-              icon={FolderIcon} 
-              label="Experience" 
-              onClick={() => toggleFolder('experience')}
-              isOpen={openFolders.experience}
-            />
-            {openFolders.experience && <ExperienceContent />}
-
-            <FileItem 
-              icon={FolderIcon} 
-              label="Contact" 
-              onClick={() => toggleFolder('contact')}
-              isOpen={openFolders.contact}
-            />
-            {openFolders.contact && <ContactContent />}
-
-            <FileItem 
-              icon={FolderIcon} 
-              label="Skills" 
-              onClick={() => toggleFolder('skills')}
-              isOpen={openFolders.skills}
-            />
-            {openFolders.skills && <SkillsContent />}
+          {/* Content */}
+          <div className="flex-1 p-4 min-h-[500px]">
+            {selectedFile ? (
+              contentComponents[selectedFile.content]?.()
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <WelcomeMessage />
+              </div>
+            )}
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="bg-gray-50 border-t border-gray-200 px-4 py-3 text-center text-sm text-gray-600">
+          Made with ☕ and 💻 by Anvesh © {new Date().getFullYear()}
         </div>
       </div>
     </div>
   );
 };
 
-export default PortfolioApp;
+export default Portfolio;
