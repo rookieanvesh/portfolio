@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaFolder, FaFolderOpen, FaFile, FaGithub, FaLinkedin } from 'react-icons/fa';
+import { FaFolder, FaFolderOpen, FaFile, FaGithub, FaLinkedin, FaFileAlt } from 'react-icons/fa';
 import { SiLeetcode } from 'react-icons/si';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import ContactForm from './ContactForm'
@@ -28,8 +28,8 @@ const FileIcon = ({ type, isOpen }) => {
 };
 const WelcomeMessage = () => (
   <div className="flex flex-col items-center justify-center h-full text-gray-600">
-    <p className="text-xl font-light italic mb-4">📂 Click around! I promise these folders don't byte... 🐱‍💻</p>
-    <p className="text-sm">Psst... I'm actively avoiding bugs while you explore!</p>
+    <p className="text-xl font-light mb-4">📂 Click around! I promise it won't download</p>
+    <p className="text-sm">Final year student at VIT Bhopal University</p>
   </div>
 );
 const contentComponents = {
@@ -360,36 +360,44 @@ const Portfolio = () => {
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
         {/* Header */}
         <div className="bg-gray-800 px-4 py-2 flex justify-between items-center">
-          <div className="flex gap-2">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
-          </div>
-          <div className="text-white text-sm">Anvesh's Portfolio</div>
-          <div className="flex gap-4 text-gray-400">
-            <a href="https://github.com/rookieanvesh" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               title="GitHub"
-               className="transition-transform hover:scale-110">
-              <FaGithub className="hover:text-white" size={20} />
-            </a>
-            <a href="https://www.linkedin.com/in/anvesh-/" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               title="LinkedIn"
-               className="transition-transform hover:scale-110">
-              <FaLinkedin className="hover:text-white" size={20} />
-            </a>
-            <a href="https://leetcode.com/u/rookieanvesh/" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               title="LeetCode"
-               className="transition-transform hover:scale-110">
-              <SiLeetcode className="hover:text-white" size={20} />
-            </a>
-          </div>
-        </div>
+  <div className="flex gap-2">
+    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+  </div>
+  <div className="text-white text-sm">Anvesh's Portfolio</div>
+  <div className="flex gap-4 text-gray-400">
+      <a href="https://drive.google.com/drive/folders/1KDRCfdB0deKhMjtw92fbU3GfcRxKKWEh" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        title="Resume"
+        className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-700 transition-all hover:text-white">
+        <FaFileAlt size={16} />
+        <span className="text-sm">Resume</span>
+      </a>
+      <a href="https://github.com/rookieanvesh" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        title="GitHub"
+        className="transition-transform hover:scale-110">
+        <FaGithub className="hover:text-white" size={20} />
+      </a>
+      <a href="https://www.linkedin.com/in/anvesh-/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        title="LinkedIn"
+        className="transition-transform hover:scale-110">
+        <FaLinkedin className="hover:text-white" size={20} />
+      </a>
+      <a href="https://leetcode.com/u/rookieanvesh/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        title="LeetCode"
+        className="transition-transform hover:scale-110">
+        <SiLeetcode className="hover:text-white" size={20} />
+    </a>
+  </div>
+</div>
 
         <div className="flex">
           {/* Sidebar */}
@@ -415,7 +423,7 @@ const Portfolio = () => {
 
         {/* Footer */}
         <div className="bg-gray-50 border-t border-gray-200 px-4 py-3 text-center text-sm text-gray-600">
-          Made with ☕ and 💻 by Anvesh © {new Date().getFullYear()}
+          Made by Anvesh © {new Date().getFullYear()}
         </div>
       </div>
     </div>
